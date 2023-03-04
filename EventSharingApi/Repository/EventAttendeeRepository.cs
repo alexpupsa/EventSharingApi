@@ -12,6 +12,7 @@ namespace EventSharingApi.Repository
         public EventAttendeeRepository(AppDbContext appDbContext)
         {
             _dbContext = appDbContext;
+            _lock = new object();
         }
 
         public async Task<bool> Add(int eventId, int userId, int quota)
@@ -25,7 +26,7 @@ namespace EventSharingApi.Repository
             lock (_lock)
             {
                 var numberOfParticipants = _dbContext.EventAttendees.Count(x => x.EventId == eventId);
-                if (numberOfParticipants > quota)
+                if (numberOfParticipants >= quota)
                 {
                     return false;
                 }

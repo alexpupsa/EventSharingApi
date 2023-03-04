@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:80"
+    restart: always
     depends_on:
       - sqlserver-db
       - rabbitmq
