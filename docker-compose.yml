@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - sqlserver-db
+      - rabbitmq
+
+  sqlserver-db:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    ports:
+      - "1433:1433"
+    volumes:
+      - "${DB_HOST_ROOT}/data:/var/opt/mssql/data"
+      - "${DB_HOST_ROOT}/log:/var/opt/mssql/log"
+      - "${DB_HOST_ROOT}/secrets:/var/opt/mssql/secrets"
+    environment:
+      SA_PASSWORD: ${MSSQL_PASSWORD}
+      ACCEPT_EULA: "Y"
+      
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: "rabbitmq"
+    labels:
+      NAME: "rabbitmq"
+    ports:
+      - "4369:4369"
+      - "5671:5671"
+      - "5672:5672"
+      - "25672:25672"
+      - "15671:15671"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
