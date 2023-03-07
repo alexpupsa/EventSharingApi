@@ -39,7 +39,7 @@ namespace EventSharingApi.Repository
 
         public async Task<List<int>> GetAllEventIdsThatShouldBeMarkedAsFinished()
         {
-            return await _dbContext.Events.Where(x => x.DateTime.AddMinutes(x.DurationInMinutes) > DateTime.UtcNow).Select(x => x.Id).ToListAsync();
+            return await _dbContext.Events.Where(x => x.State != EventState.Finished && x.DateTime.AddMinutes(x.DurationInMinutes) > DateTime.UtcNow).Select(x => x.Id).ToListAsync();
         }
 
         public async Task<List<EventModel>> GetAllEventsThatStartInMinutes(int minutes)
